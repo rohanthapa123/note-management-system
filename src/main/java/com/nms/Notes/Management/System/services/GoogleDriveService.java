@@ -8,15 +8,18 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
+import java.util.Base64;
 import java.util.Collections;
 
 @Service
@@ -24,19 +27,27 @@ public class GoogleDriveService {
 
     private static final String APPLICATION_NAME = "Notes-Management-System";
     public static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private static final String CREDENTIALS_FILE_PATH = getPathToGoogleCredentials();
+//    private static final String CREDENTIALS_FILE_PATH = getPathToGoogleCredentials();
+//
+//    private static String getPathToGoogleCredentials() {
+//        String currentDirectory = System.getProperty("user.dir");
+//        Path filePath = Paths.get(currentDirectory, "google-service-account.json");
+//        return filePath.toString();
+//    }
 
-    private static String getPathToGoogleCredentials() {
-        String currentDirectory = System.getProperty("user.dir");
-        Path filePath = Paths.get(currentDirectory, "google-service-account.json");
-        return filePath.toString();
+    @Value("${GOOGLE_CREDENTIALS}")
+    private String googleCredentials;
+
+    private GoogleCredential getGoogleCredentials() throws IOException {
+        byte[] decodedBytes = Base64.getDecoder().decode(googleCredentials);
+        return GoogleCredential.fromStream(new ByteArrayInputStream(decodedBytes))
+                .createScoped(Collections.singleton(DriveScopes.DRIVE));
     }
 
     public Drive createDriveService() throws IOException, GeneralSecurityException {
 
 
-        GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(CREDENTIALS_FILE_PATH))
-                .createScoped(Collections.singleton(DriveScopes.DRIVE));
+        GoogleCredential credential = getGoogleCredentials();
 
         return new Drive.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),

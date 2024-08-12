@@ -35,7 +35,7 @@ public class AdminController {
         } else {
             ResponseCookie cookie = ResponseCookie.from("auth-token" , response)
                     .httpOnly(true)
-                    .secure(false)
+                    .secure(true)
                     .path("/")
                     .maxAge(Duration.ofHours(1))
                     .build();
@@ -45,12 +45,12 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/logout")dd
     public ResponseEntity<?> logout(){
 
         ResponseCookie cookie = ResponseCookie.from("auth-token","")
                 .httpOnly(true).
-        secure(false).path("/").maxAge(Duration.ofHours(0)).build();
+        secure(true).path("/").maxAge(Duration.ofHours(0)).build();
 
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body("Logout Successful");
