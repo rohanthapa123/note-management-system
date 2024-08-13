@@ -45,7 +45,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/logout")dd
+    @PostMapping("/logout")
     public ResponseEntity<?> logout(){
 
         ResponseCookie cookie = ResponseCookie.from("auth-token","")

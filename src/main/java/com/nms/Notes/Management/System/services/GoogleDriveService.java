@@ -27,13 +27,6 @@ public class GoogleDriveService {
 
     private static final String APPLICATION_NAME = "Notes-Management-System";
     public static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-//    private static final String CREDENTIALS_FILE_PATH = getPathToGoogleCredentials();
-//
-//    private static String getPathToGoogleCredentials() {
-//        String currentDirectory = System.getProperty("user.dir");
-//        Path filePath = Paths.get(currentDirectory, "google-service-account.json");
-//        return filePath.toString();
-//    }
 
     @Value("${GOOGLE_CREDENTIALS}")
     private String googleCredentials;
