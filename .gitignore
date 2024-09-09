@@ -12,6 +12,9 @@ application-dev.properties
 
 application-prod.properties
 /src/main/resources/application-prod.properties
+
+*.properties
+
 google-service-account.json
 
 ### STS ###
