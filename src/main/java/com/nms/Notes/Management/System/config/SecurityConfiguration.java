@@ -2,6 +2,7 @@ package com.nms.Notes.Management.System.config;
 
 import com.nms.Notes.Management.System.services.CustomAdminDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +31,8 @@ public class SecurityConfiguration  {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @Value("${baseurl}")
+    private String baseurl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -60,7 +63,7 @@ public class SecurityConfiguration  {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173","https://rohanthapa.com.np")
+                        .allowedOrigins(baseurl)
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);

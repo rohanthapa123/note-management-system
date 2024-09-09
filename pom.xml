@@ -130,6 +130,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>Notes-Management-System</finalName>
 	</build>
 
 </project>

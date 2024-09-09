@@ -33,14 +33,14 @@ public class JwtServices {
             SecretKey secret = keyGenerator.generateKey();
             SECRET = Base64.getEncoder().encodeToString(secret.getEncoded());
         }catch (NoSuchAlgorithmException e){
-            System.out.println(e.getMessage());;
+            System.out.println(e.getMessage());
         }
     }
 
     public String generateToken(Admin admin){
 
         Map<String, String> claims = new HashMap<>();
-        claims.put("iss","https://rohanthapa.com.np/notes");
+        claims.put("iss","http://localhost:8080/notes");
 
         return Jwts.builder()
                 .claims(claims)
