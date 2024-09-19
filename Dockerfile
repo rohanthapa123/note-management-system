@@ -10,7 +10,7 @@ RUN mvn clean package -DskipTests
 FROM openjdk:22
 WORKDIR /app
 
-COPY --from=build /app/buid/Notes-Management-System.jar app.jar
+COPY --from=build /app/target/Notes-Management-System.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java" , "-jar" , "app.jar"]
