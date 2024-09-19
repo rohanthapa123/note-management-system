@@ -7,7 +7,7 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-FROM openjdk:22
+FROM openjdk:21
 WORKDIR /app
 
 COPY --from=build /app/target/Notes-Management-System.jar app.jar
