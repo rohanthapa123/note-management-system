@@ -29,6 +29,12 @@ jobs:
 
 
       - name: Build the app
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          MONGO_DB: ${{ secrets.MONGO_DB }}
+          JWT_SECRETS: ${{ secrets.JWT_SECRETS }}
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         run: mvn package -DskipTests
 
 
