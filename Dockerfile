@@ -1,8 +1,17 @@
-    FROM openjdk:22
+FROM maven:3.9.7 AS build
+WORKDIR /app
 
-    EXPOSE 8080
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-    ADD target/Notes-Management-System.jar app.jar
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-    ENTRYPOINT ["java" , "-jar" , "/app.jar"]
+FROM openjdk:22
+WORKDIR /app
+
+COPY --from=build /app/buid/Notes-Management-System.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java" , "-jar" , "app.jar"]
 

@@ -4,16 +4,11 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-application.properties
-/src/main/resources/application.properties
 
 application-dev.properties
 /src/main/resources/application-dev.properties
 
-application-prod.properties
-/src/main/resources/application-prod.properties
-
-*.properties
+/src/main/resources/keystore.p12
 
 google-service-account.json
 

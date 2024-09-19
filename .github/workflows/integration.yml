@@ -1,0 +1,53 @@
+name: Integration Test
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      MONGO_DB: ${{ secrets.MONGO_DB }}
+      JWT_SECRETS: ${{ secrets.JWT_SECRETS }}
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test if Secrets are Set
+        run: |
+          echo "Checking if BASE_URL is set: ${{ secrets.BASE_URL }}"
+          echo "Checking if MONGO_URI is set: ${{ secrets.MONGO_URI }}"
+          echo "Checking if JWT_SECRETS is set: ${{ secrets.JWT_SECRETS }}"
+
+      - name: Set up JDK 22
+        uses: actions/setup-java@v4
+        with:
+          java-version: '22'
+          distribution: 'temurin'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven
+
+      - name: Run Maven tests
+        run: mvn clean test
+
+      - name: Build the app
+
+
+        run: mvn package -DskipTests
+
+      - name: Check for successful Build
+        run: echo "Integration test passed"
+
+
