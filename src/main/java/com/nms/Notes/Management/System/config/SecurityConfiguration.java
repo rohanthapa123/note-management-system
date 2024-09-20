@@ -38,7 +38,7 @@ public class SecurityConfiguration  {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry ->{
-            registry.requestMatchers("/api/notes","/api/notes/search","/api/login").permitAll();
+            registry.requestMatchers("/api/notes","/api/notes/search","/api/login","/api/ping").permitAll();
             registry.anyRequest().authenticated();
         }).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
