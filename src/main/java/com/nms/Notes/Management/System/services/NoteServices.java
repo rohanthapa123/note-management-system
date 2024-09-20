@@ -33,7 +33,7 @@ public class NoteServices {
         return noterepository.searchNotes(query);
     }
 
-    @CacheEvict("notes")
+    @CacheEvict(value = "notes" , allEntries = true)
     public Note addNote(String title, String category, String imageurl , MultipartFile file) throws IOException , GeneralSecurityException {;
         Note newnote = new Note();
         newnote.setTitle(title);
@@ -53,7 +53,11 @@ public class NoteServices {
 
 
 
-        return noterepository.save(newnote);
+        noterepository.save(newnote);
+
+        getAllNotes();
+
+        return newnote;
     }
 
     @CacheEvict("notes")
