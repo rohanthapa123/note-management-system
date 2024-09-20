@@ -39,13 +39,11 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven
 
+      - name: Build the app (for testing)
+        run: mvn clean package -DskipTests
+
       - name: Run Maven tests
         run: mvn clean test
-
-      - name: Build the app
-
-
-        run: mvn package -DskipTests
 
       - name: Check for successful Build
         run: echo "Integration test passed"
