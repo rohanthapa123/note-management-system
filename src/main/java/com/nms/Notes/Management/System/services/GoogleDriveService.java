@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 import java.util.Collections;
@@ -38,8 +36,6 @@ public class GoogleDriveService {
     }
 
     public Drive createDriveService() throws IOException, GeneralSecurityException {
-
-
         GoogleCredential credential = getGoogleCredentials();
 
         return new Drive.Builder(
@@ -49,9 +45,6 @@ public class GoogleDriveService {
                 .build();
     }
 
-
-
-
     public String uploadFileToDrive(MultipartFile multipartfile, String mimeType) throws IOException, GeneralSecurityException {
         try {
 
@@ -59,10 +52,7 @@ public class GoogleDriveService {
             java.io.File tempFile = tempDir.resolve(multipartfile.getOriginalFilename()).toFile();
             multipartfile.transferTo(tempFile);
 
-
             String folderId = "12FrrF1yO9q1LadxPHRLw9inZGgi292bR";
-
-            Drive drive = createDriveService();
 
             com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
 
@@ -80,5 +70,9 @@ public class GoogleDriveService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload file to Google Drive: " + e.getMessage(), e);
         }
+    }
+
+    public void deleteFileFromDrive(String id) throws GeneralSecurityException, IOException {
+        createDriveService().files().delete(id).execute();
     }
 }

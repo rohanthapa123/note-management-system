@@ -24,17 +24,19 @@ import java.util.List;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtServices jwtServices;
-
-    @Autowired
-    private CustomAdminDetailService customAdminDetailService;
+    private final JwtServices jwtServices;
+    private final CustomAdminDetailService customAdminDetailService;
 
     private static final List<String> EXCLUDE_URLS = Arrays.asList(
             "/api/login",
             "/api/notes",
             "/api/notes/search"
-    );  
+    );
+
+    public JwtFilter(JwtServices jwtServices, CustomAdminDetailService customAdminDetailService) {
+        this.jwtServices = jwtServices;
+        this.customAdminDetailService = customAdminDetailService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -64,7 +66,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-         log.info("Token: {}", token);
+        log.info("Token: {}", token);
         log.info("Email: {}", email);
 
 
