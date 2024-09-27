@@ -4,13 +4,12 @@ import com.nms.Notes.Management.System.model.Note;
 import com.nms.Notes.Management.System.services.NoteServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.List;
 
 @CrossOrigin
 @RestController()
@@ -22,14 +21,25 @@ public class NoteController {
     private NoteServices noteservices;
 
     @GetMapping("/notes")
-    public List<Note> getAllNotes(){
-        return noteservices.getAllNotes();
+    public Page<Note> getAllNotes(
+            @RequestParam(value = "pageNumber" , defaultValue = "0" , required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize" , defaultValue = "10" , required = false) Integer pageSize,
+            @RequestParam(value = "sortBy" , defaultValue = "created_at" , required = false) String sortBy,
+            @RequestParam(value = "sortOrder" , defaultValue = "asc" , required = false) String sortOrder
+    ){
+        return noteservices.getAllNotes(pageNumber, pageSize , sortBy , sortOrder);
     }
 
 
     @GetMapping("/notes/search")
-    public List<Note> getSearchNotes(@RequestParam(value = "query" , required = false , defaultValue = "") String query){
-        return noteservices.getSearchNotes(query);
+    public Page<Note> getSearchNotes(
+            @RequestParam(value = "query" , required = false , defaultValue = "") String query,
+            @RequestParam(value = "pageNumber" , defaultValue = "0" , required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize" , defaultValue = "10" , required = false) Integer pageSize,
+            @RequestParam(value = "sortBy" , defaultValue = "created_at" , required = false) String sortBy,
+            @RequestParam(value = "sortOrder" , defaultValue = "asc" , required = false) String sortOrder
+    ){
+        return noteservices.getSearchNotes(query , pageNumber, pageSize , sortBy , sortOrder);
     }
 
     @PostMapping("/note")

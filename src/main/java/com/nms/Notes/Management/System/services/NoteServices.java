@@ -7,12 +7,17 @@ import com.nms.Notes.Management.System.repo.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -27,12 +32,26 @@ public class NoteServices {
     }
 
     @Cacheable("notes")
-    public List<Note> getAllNotes(){
-        return noterepository.findAll();
+    public Page<Note> getAllNotes(Integer pageNumber, Integer pageSize , String sortBy , String sortOrder){
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize , Sort.by(direction, sortBy));
+        Page<Note> pageNotes =  noterepository.findAll(pageable);
+
+//        HashMap<String , Object> notes = new HashMap<>();
+//        notes.put("items" , pageNotes);
+//        notes.put("currentPage" , pageNotes.getNumber());
+//        notes.put("totalItems" , pageNotes.getTotalElements());
+//        notes.put("totalPages" , pageNotes.getTotalPages());
+//        notes.put("pageSize" , pageNotes.getSize());
+        return pageNotes;
+
     }
 
-    public List<Note> getSearchNotes(String query){
-        return noterepository.searchNotes(query);
+    public Page<Note> getSearchNotes(String query , Integer pageNumber, Integer pageSize , String sortBy , String sortOrder){
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(direction, sortBy));
+        Page<Note> pageNotes = noterepository.searchNotes(query, pageable);
+        return pageNotes;
     }
 
     @CacheEvict(value = "notes" , allEntries = true)
@@ -53,7 +72,7 @@ public class NoteServices {
             newnote.setUrl(previewUrl);
         }
         noterepository.save(newnote);
-        getAllNotes();
+        getAllNotes(0,10,"created_at", "asc");
         return newnote;
     }
 
