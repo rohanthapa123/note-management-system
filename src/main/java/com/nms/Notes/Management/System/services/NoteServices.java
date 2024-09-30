@@ -4,6 +4,7 @@ import com.nms.Notes.Management.System.Exception.ResourceNotFoundException;
 import com.nms.Notes.Management.System.controller.AddNote;
 import com.nms.Notes.Management.System.model.Note;
 import com.nms.Notes.Management.System.repo.NoteRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+@Slf4j
 @Service
 public class NoteServices {
 
@@ -36,13 +38,6 @@ public class NoteServices {
         Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, pageSize , Sort.by(direction, sortBy));
         Page<Note> pageNotes =  noterepository.findAll(pageable);
-
-//        HashMap<String , Object> notes = new HashMap<>();
-//        notes.put("items" , pageNotes);
-//        notes.put("currentPage" , pageNotes.getNumber());
-//        notes.put("totalItems" , pageNotes.getTotalElements());
-//        notes.put("totalPages" , pageNotes.getTotalPages());
-//        notes.put("pageSize" , pageNotes.getSize());
         return pageNotes;
 
     }
@@ -50,6 +45,7 @@ public class NoteServices {
     public Page<Note> getSearchNotes(String query , Integer pageNumber, Integer pageSize , String sortBy , String sortOrder){
         Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(direction, sortBy));
+        log.info(query);
         Page<Note> pageNotes = noterepository.searchNotes(query, pageable);
         return pageNotes;
     }
