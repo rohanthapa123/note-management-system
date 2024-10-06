@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException ex){
+    public ResponseEntity<HashMap<String, String>> handleResourceNotFoundException(ResourceNotFoundException ex){
         HashMap<String, String> error = new HashMap<>();
         error.put("message",ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
