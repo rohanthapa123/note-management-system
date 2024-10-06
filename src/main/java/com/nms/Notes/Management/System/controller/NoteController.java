@@ -5,6 +5,8 @@ import com.nms.Notes.Management.System.services.NoteServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,8 +19,12 @@ import java.security.GeneralSecurityException;
 @Slf4j
 public class NoteController {
 
-    @Autowired
-    private NoteServices noteservices;
+
+    private final NoteServices noteservices;
+
+    public NoteController(NoteServices noteservices) {
+        this.noteservices = noteservices;
+    }
 
     @GetMapping("/notes")
     public Page<Note> getAllNotes(
@@ -28,6 +34,11 @@ public class NoteController {
             @RequestParam(value = "sortOrder" , defaultValue = "asc" , required = false) String sortOrder
     ){
         return noteservices.getAllNotes(pageNumber, pageSize , sortBy , sortOrder);
+    }
+
+    @GetMapping("/notes/{id}")
+    public ResponseEntity<Note> getNoteById(@PathVariable String id){
+        return new ResponseEntity<>(noteservices.getNoteById(id) , HttpStatus.OK);
     }
 
 
@@ -63,9 +74,10 @@ public class NoteController {
             @RequestPart("title") String title,
             @RequestPart("category") String category,
             @RequestPart("noteimage") String noteimage,
-            @RequestPart("notepdf") MultipartFile notepdf) throws GeneralSecurityException, IOException {
+            @RequestPart(name = "exisitingPdf", required = false) String existingPdf,
+            @RequestPart(name = "notepdf", required = false) MultipartFile notepdf) throws GeneralSecurityException, IOException {
 
-        return noteservices.updateNote(id, title, category,noteimage, notepdf);
+        return noteservices.updateNote(id, title, category,noteimage, notepdf , existingPdf);
     }
 
     @DeleteMapping("note/{id}")

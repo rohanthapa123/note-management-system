@@ -37,8 +37,7 @@ public class NoteServices {
     public Page<Note> getAllNotes(Integer pageNumber, Integer pageSize , String sortBy , String sortOrder){
         Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, pageSize , Sort.by(direction, sortBy));
-        Page<Note> pageNotes =  noterepository.findAll(pageable);
-        return pageNotes;
+        return noterepository.findAll(pageable);
 
     }
 
@@ -46,8 +45,7 @@ public class NoteServices {
         Sort.Direction direction = "desc".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(direction, sortBy));
         log.info(query);
-        Page<Note> pageNotes = noterepository.searchNotes(query, pageable);
-        return pageNotes;
+        return noterepository.searchNotes(query, pageable);
     }
 
     @CacheEvict(value = "notes" , allEntries = true)
@@ -73,7 +71,7 @@ public class NoteServices {
     }
 
     @CacheEvict(value = "notes", allEntries = true)
-    public Note updateNote(String id ,String title, String category, String imageurl, MultipartFile file) throws GeneralSecurityException, IOException {
+    public Note updateNote(String id ,String title, String category, String imageurl, MultipartFile file, String existingPdf) throws GeneralSecurityException, IOException {
 
         Note oldnote = noterepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Note not found"));
 
@@ -82,25 +80,28 @@ public class NoteServices {
         oldnote.setTitle(title);
         oldnote.setUpdated_at(new Date());
 
-        if(file != null && !file.isEmpty()){
-            String oldFileUrl = oldnote.getDownload();
-            if(oldFileUrl != null && !oldFileUrl.isEmpty()){
-                String oldFileId = extractFileIdFromUrl(oldFileUrl);
-                googledriveservice.deleteFileFromDrive(oldFileId);
+        if(existingPdf != null) {
+
+
+            if (file != null && !file.isEmpty()) {
+                String oldFileUrl = oldnote.getDownload();
+                if (oldFileUrl != null && !oldFileUrl.isEmpty()) {
+                    String oldFileId = extractFileIdFromUrl(oldFileUrl);
+                    googledriveservice.deleteFileFromDrive(oldFileId);
+                }
+                String newFileId = googledriveservice.uploadFileToDrive(file, file.getContentType());
+                String downloadUrl = "https://drive.google.com/uc?export=download&id=" + newFileId;
+                String previewUrl = "https://drive.google.com/file/d/" + newFileId + "/preview";
+
+                oldnote.setDownload(downloadUrl);
+                oldnote.setUrl(previewUrl);
             }
-            String newFileId = googledriveservice.uploadFileToDrive(file, file.getContentType());
-            String downloadUrl = "https://drive.google.com/uc?export=download&id=" + newFileId;
-            String previewUrl = "https://drive.google.com/file/d/" + newFileId + "/preview";
-
-            oldnote.setDownload(downloadUrl);
-            oldnote.setUrl(previewUrl);
         }
-
         return noterepository.save(oldnote);
 
     }
 
-    @CacheEvict("notes")
+    @CacheEvict(value = "notes" , allEntries = true)
     public void deleteNoteById(String id) {
         noterepository.deleteById(id);
     }
@@ -114,4 +115,7 @@ public class NoteServices {
         return null;
     }
 
+    public Note getNoteById(String id) {
+        return noterepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("No note found!!"));
+    }
 }
