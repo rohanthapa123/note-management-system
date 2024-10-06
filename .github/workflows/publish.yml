@@ -6,7 +6,7 @@ on:
     branches:
       - master
 jobs:
-  dockerize:
+  build:
     runs-on: ubuntu-latest
 
     env:
@@ -28,6 +28,10 @@ jobs:
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/notes-management-system
+
+      - name: Trigger Render deployment
+        run: |
+          curl -X POST ${{ secrets.RENDER_TRIGGER }}
 
 
         
